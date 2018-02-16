@@ -1,10 +1,13 @@
 require_relative "tile"
 
 class Board
+  attr_reader :grid
+
   def self.empty_grid
-    Array.new(9) do
+    @grid = Array.new(9) do
       Array.new(9) { Tile.new(0) }
     end
+    grid
   end
 
   def self.from_file(filename)
@@ -23,7 +26,7 @@ class Board
 
   def [](pos)
     x, y = pos
-    grid[x][y]
+    @grid[x][y]
   end
 
   def []=(pos, value)
@@ -43,13 +46,12 @@ class Board
     end
   end
 
-  def rows
-    grid
-  end
 
   def size
     grid.size
   end
+
+  alias_method :rows, :grid
 
   def solved?
     rows.all? { |row| solved_set?(row) } &&
@@ -67,8 +69,8 @@ class Board
     x = (idx / 3) * 3
     y = (idx % 3) * 3
 
-    (x...x + 3).each do |i|
-      (y...y + 3).each do |j|
+    (x..x + 2).each do |j|
+      (y..y + 2).each do |i|
         tiles << self[[i, j]]
       end
     end
@@ -80,6 +82,4 @@ class Board
     (0..8).to_a.map { |i| square(i) }
   end
 
-  private
-  attr_reader :grid
 end
